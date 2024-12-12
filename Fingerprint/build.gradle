@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    id 'maven-publish'
 }
 
 android {
@@ -30,11 +31,27 @@ android {
 }
 
 dependencies {
-
     implementation libs.androidx.core.ktx
     implementation libs.androidx.appcompat
     implementation libs.material
-    testImplementation libs.junit
-    androidTestImplementation libs.androidx.junit
-    androidTestImplementation libs.androidx.espresso.core
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            def today = new Date().format('yyyyMMdd')
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.android.fingerprint'
+                artifactId = 'netlib'
+                version = "2.0-$today"
+            }
+        }
+        repositories {
+            mavenLocal()
+            maven {
+                url uri('D://repository/fingerprint')
+            }
+        }
+    }
 }
